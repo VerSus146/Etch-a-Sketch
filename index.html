@@ -1,0 +1,229 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Etch-a-Sketch</title>
+        <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
+        <style>
+            
+            body{
+                background-color: #c2db8f;
+                text-align: center;
+            }
+            
+            #header {
+                width:17vw;
+                margin:0 auto;
+                border-style:groove;
+                border-color: beige;
+                border-radius: 2vw;
+            }
+            
+            #container{
+                margin: 5vh auto;
+                height: 80vh;
+                width: 70vw;
+                border-style: solid;
+                border-color: #9f4747;
+                background-color: #FF7373;
+                border-radius: 3vw;
+            }
+            
+            #gamearea{
+                margin:2vh auto;
+                height:75vh;
+                width:52vw;
+            }
+            
+            #menu {
+                float: left;
+                margin-top: 12vh;
+                margin-left: 0.5vw;
+                width: 7.2vw;
+                height: 75vh;
+            }
+            
+            #menu2 {
+                font-family: 'Permanent Marker';
+                color: yellow;
+                font-size: 40px;
+                float: right;
+                margin-right: 0.5vw;
+                width: 7.2vw;
+                height: 75vh;
+            }
+            
+            .button{
+                border-radius: 100%;
+                outline:none;
+                margin-top: 2vh;
+                height: 8.8vh;
+                width: 5vw;
+                background: #c2db8f;
+            }
+            
+            .tile {
+                background-color: white;
+                height: 100px;
+                width: 200px;
+            }
+            
+            #howto{
+                margin:2vh auto;
+                height:75vh;
+                width:52vw;
+                border-style: solid;
+                display: none;
+            }
+            
+        </style>
+        <link href="color/color-picker.min.css" rel="stylesheet">
+        <script src="color/color-picker.min.js"></script>
+        <script>
+            var inter;
+            var mode = "painting";
+            var color = "black";
+            var white;
+            var gamewidth;
+            var gameheigth;
+            
+            function size(){
+                gamewidth = document.getElementById("gamearea").clientWidth;
+                gameheigth = document.getElementById("gamearea").clientHeight;
+                document.getElementById("color").style.backgroundColor = color;
+            }
+            
+            function setdiv(width,height){
+                var div = document.createElement("DIV")
+                div.classList.add("tile")
+                div.addEventListener("mouseover", function(){
+                    if(mode == "painting"){
+                        this.style.backgroundColor = color
+                    } else if(mode == "Transparent"){
+                        this.style.backgroundColor += color
+                    }
+                })
+                div.style.width = width
+                div.style.height = height
+                return(div)
+            }
+            
+            function settiles(){
+                clearInterval(inter);
+                var tiles = prompt("How many tiles would you like to have?", 0);
+                if(isNaN(tiles)){
+                    alert("There was a letter you dummy")
+                } else if(tiles == 0) {
+                    alert("0? Really?")
+                } else if(tiles > 0) {
+                    var width = gamewidth/tiles
+                    var height = gameheigth/tiles
+                    var gamearea = document.getElementById("gamearea")
+                    while (gamearea.firstChild) {
+                        gamearea.removeChild(gamearea.firstChild);
+                    }
+                    for(i=0; i < tiles; i++){
+                        
+                        for(y=0; y < tiles; y++){
+                            div = setdiv(width,height);
+                            div.style.float = "left"
+                            gamearea.append(div);
+                        }
+                        div = setdiv(width,height);
+                        gamearea.append(div);
+                    }
+                }
+            }
+            
+            function colorswap(){
+                clearInterval(inter);
+                if(mode == "painting"){
+                    if(color == "black"){
+                        color = "blue"
+                    } else if(color =="blue"){
+                        color = "green"
+                    } else if(color == "green"){
+                        color = "yellow"
+                    } else if(color == "yellow"){
+                        color = "pink"
+                    } else if(color == "pink"){
+                        color = "black"
+                    } else {
+                        color = "black"
+                    }
+                    
+                    if(color == "white"){
+                        color = white
+                    }
+                }
+                    
+                document.getElementById("color").style.backgroundColor = color;
+            }
+            
+            function MouseButton(event){
+                if(event.button == 0){
+                    mode = "notpainting"
+                }    
+            }
+            
+            function ChangeMode(){
+                mode = "painting"
+            }
+            
+            function Erase(){
+                clearInterval(inter);
+                white = color
+                color = "white"
+            }
+            
+            function HowTo(str){
+                if(str == "game"){
+                    document.getElementById("gamearea").style.display = "none"
+                    document.getElementById("howto").style.display = "block"
+                } else {
+                    document.getElementById("gamearea").style.display = "block"
+                    document.getElementById("howto").style.display = "none"
+                }
+            }
+            
+            function Rainbow(){
+                var string = "rgb(" + Math.floor(Math.random() * (256 - 1) + 0) + "," + Math.floor(Math.random() * (256 - 1) + 0) + "," + Math.floor(Math.random() * (256 - 1) + 0) + ")";
+                
+                document.getElementById("color").style.backgroundColor = string;
+                
+                color = string;
+            }
+            
+            function Interval(){
+                inter = setInterval(Rainbow,100)
+            }
+            
+            
+        </script>
+    </head>
+    <body onload="size()" onmousedown="MouseButton(event)" onmouseup="ChangeMode()" onresize="size()">
+        <div id="header">
+            <h1>Etch-a-Sketch</h1>
+        </div>
+        <div id="container">
+            <div id="menu">
+                <button type="button" class="button" onclick="settiles()">Set</button>
+                <button type="button" class="button" onclick="colorswap()" id="color"></button>
+                <button type="button" class ="button" onclick="Erase()">Erase</button>
+                <button type="button" class="button" onclick="HowTo('game')">How To</button>
+                <button type="button" class="button" onclick="Interval()">Rainbow</button>
+            </div>
+            <div id="menu2">
+                E<br>t<br>c<br>h<br><br>a<br><br>S<br>k<br>e<br>t<br>c<br>h
+            </div>
+            <div id="howto">
+                <br><br>Haven't you drawn ever before?<br>
+                It's simple. Just move your mouse over the pallete and you are good to go.<br> 
+                You can hold LMB to stop drawing.<br><br>
+                <button type="button" class="button" onclick="HowTo(howto)">Go Back</button>
+            </div>
+            <div id="gamearea">
+            </div>
+            
+        </div>
+    </body>
+</html>
